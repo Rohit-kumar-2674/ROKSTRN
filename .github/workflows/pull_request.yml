@@ -35,7 +35,9 @@ jobs:
           validate-wrappers: true
           cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Install Android SDK components
-        run: sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" \
+            "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
       - name: Build and validate
         env:
           TZ: UTC
