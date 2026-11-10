@@ -14,6 +14,7 @@ import com.lagradost.cloudstream3.MainActivity
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SearchResponse
 import com.lagradost.cloudstream3.base64Encode
+import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING
 import com.lagradost.cloudstream3.syncproviders.AccountManager.Companion.APP_STRING_SHARE
 import com.lagradost.cloudstream3.utils.DataStore.getKey
 import com.lagradost.cloudstream3.utils.DataStore.setKey
@@ -86,7 +87,7 @@ object TvChannelUtils {
                     }
                     .setContentId(item.url)
                     .setType(TvContractCompat.PreviewPrograms.TYPE_MOVIE)
-                    .setIntentUri(csshareUri.toUri())
+                    .setIntent(Intent(Intent.ACTION_VIEW, csshareUri.toUri()).setPackage(context.packageName))
                     .setPosterArtAspectRatio(TvContractCompat.PreviewPrograms.ASPECT_RATIO_2_3)
 
                 // Validate poster URL before setting
@@ -144,7 +145,8 @@ object TvChannelUtils {
             .setAppLinkIconUri(iconUri)
             .setDisplayName(context.getString(R.string.app_name))
             .setAppLinkIntent(Intent(Intent.ACTION_VIEW).apply {
-                data = "cloudstreamapp://open".toUri()
+                data = "$APP_STRING://open".toUri()
+                setPackage(context.packageName)
             })
             .setInputId(inputId)
             .build()

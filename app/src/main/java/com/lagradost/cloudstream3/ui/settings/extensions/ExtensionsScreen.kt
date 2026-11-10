@@ -206,9 +206,9 @@ fun Preview() {
                         uuid1 to Repository(
                             uuid = uuid1,
                             info = RepositoryInfo(
-                                name = "Cloudstream providers repository",
+                                name = "Example repository",
                                 description = "hello",
-                                url = "https://raw.githubusercontent.com/recloudstream/extensions/refs/heads/master/repo.json",
+                                url = "https://example.invalid/repo.json",
                                 iconUrl = null
                             ),
                             status = RepositoryStatus.Loading,

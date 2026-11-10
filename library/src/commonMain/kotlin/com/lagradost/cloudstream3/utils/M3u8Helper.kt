@@ -136,7 +136,7 @@ object M3u8Helper2 {
         returnThis: Boolean = true
     ): List<M3u8Helper.M3u8Stream> {
         val list = mutableListOf<M3u8Helper.M3u8Stream>()
-        val response = app.get(m3u8.streamUrl, headers = m3u8.headers, verify = false).text
+        val response = app.get(m3u8.streamUrl, headers = m3u8.headers).text
         val parsed = HlsPlaylistParser.parse(m3u8.streamUrl, response)
 
         var anyFound = false
@@ -237,7 +237,7 @@ object M3u8Helper2 {
             if (index < 0 || index >= size) throw IllegalArgumentException("index must be in the bounds of the ts")
             val ts = allTsLinks[index]
 
-            val tsResponse = app.get(ts.url, headers = headers, verify = false)
+            val tsResponse = app.get(ts.url, headers = headers)
             val body = tsResponse.body
             val tsData = body.bytes()
             body.close()
@@ -273,8 +273,7 @@ object M3u8Helper2 {
         val playlistResponse =
             app.get(
                 playlistStream.streamUrl,
-                headers = playlistStream.headers,
-                verify = false
+                headers = playlistStream.headers
             ).text
 
         val parsed = HlsPlaylistParser.parse(playlistStream.streamUrl, playlistResponse)
@@ -333,7 +332,7 @@ object M3u8Helper2 {
 
             encryptionIv = match[3].encodeToByteArray()
             val encryptionKeyResponse =
-                app.get(encryptionUrl, headers = playlistStream.headers, verify = false)
+                app.get(encryptionUrl, headers = playlistStream.headers)
             val body = encryptionKeyResponse.body
             encryptionData = body.bytes()
             body.close()

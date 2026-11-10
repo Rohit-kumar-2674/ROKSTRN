@@ -64,7 +64,6 @@ open class TmdbProvider : MainAPI() {
     override val hasMainPage = true
     override val providerType = ProviderType.MetaProvider
 
-    private val tmdbApiKey = "e6333b32409e02a4a6eba6fb7ff866bb"
     private val tmdbApiUrl = "https://api.themoviedb.org/3"
 
     @Serializable
@@ -244,13 +243,12 @@ open class TmdbProvider : MainAPI() {
     }
 
     private suspend fun getApi(path: String, extraParams: Map<String, String> = emptyMap()): String {
-        val params = buildMap {
-            put("api_key", tmdbApiKey)
-            putAll(extraParams)
-        }
+        val token = MetadataCredentials.tmdbToken
+            ?: throw ErrorLoadingException("Set a TMDB read access token in Settings > General.")
         return app.get(
             url = "$tmdbApiUrl$path",
-            params = params,
+            headers = mapOf("Authorization" to "Bearer $token"),
+            params = extraParams,
         ).text
     }
 

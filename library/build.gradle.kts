@@ -110,11 +110,8 @@ buildkonfig {
     defaultConfigs {
         // Reads local.properties
         val localProperties = gradleLocalProperties(rootDir, project.providers)
-        buildConfigField(
-            FieldSpec.Type.STRING,
-            "MDL_API_KEY",
-            (System.getenv("MDL_API_KEY") ?: localProperties["mdl.key"]).toString()
-        )
+        // Keep the generated ABI getter without embedding a credential.
+        buildConfigField(FieldSpec.Type.STRING, "MDL_API_KEY", "")
 
         buildConfigField(
             FieldSpec.Type.STRING,

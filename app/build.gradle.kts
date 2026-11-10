@@ -4,6 +4,7 @@ import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import java.net.URI
 
 plugins {
     alias(libs.plugins.android.application)
@@ -15,51 +16,75 @@ plugins {
 
 val javaTarget = JvmTarget.fromTarget(libs.versions.jvmTarget.get())
 
+val localProperties = gradleLocalProperties(rootDir, project.providers)
+val forkVersion = "${libs.versions.versionName.get()}-rokstrn.1"
+
+fun forkSetting(environmentName: String, propertyName: String): String =
+    providers.environmentVariable(environmentName).orNull
+        ?: localProperties.getProperty(propertyName).orEmpty()
+
+val forkRepository = forkSetting("ROKSTRN_GITHUB_REPOSITORY", "rokstrn.github.repository").trim()
+require(forkRepository.isEmpty() ||
+    (forkRepository.matches(Regex("[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9_.-]+")) &&
+        forkRepository.substringAfter('/') !in listOf(".", "..") &&
+        !forkRepository.equals("recloudstream/cloudstream", ignoreCase = true))) {
+    "Configure the owner/repository of the independent ROKSTRN fork."
+}
+val communityUrl = forkSetting("ROKSTRN_COMMUNITY_URL", "rokstrn.community.url").trim()
+require(communityUrl.isEmpty() || URI(communityUrl).let {
+    it.scheme == "https" && it.host != null && it.userInfo == null
+}) { "The community URL must use HTTPS." }
+val updatesEnabled = forkSetting("ROKSTRN_ENABLE_UPDATES", "rokstrn.updates.enabled") == "true"
+require(!updatesEnabled || forkRepository.isNotEmpty()) { "Updates require a ROKSTRN repository." }
+
+val signingFile = forkSetting("ROKSTRN_KEYSTORE_FILE", "rokstrn.signing.storeFile").trim()
+val signingPassword = forkSetting("ROKSTRN_KEYSTORE_PASSWORD", "rokstrn.signing.storePassword")
+val signingAlias = forkSetting("ROKSTRN_KEY_ALIAS", "rokstrn.signing.keyAlias").trim()
+val signingKeyPassword = forkSetting("ROKSTRN_KEY_PASSWORD", "rokstrn.signing.keyPassword")
+val signingValues = listOf(signingFile, signingPassword, signingAlias, signingKeyPassword)
+val hasReleaseSigning = signingValues.any { it.isNotEmpty() }
+require(!hasReleaseSigning || signingValues.all { it.isNotEmpty() }) {
+    "Set all four ROKSTRN signing properties or leave all four unset."
+}
+val releaseKey = if (hasReleaseSigning) rootProject.file(signingFile) else null
+require(releaseKey == null || releaseKey.isFile) { "The ROKSTRN keystore file is unavailable." }
+
 abstract class GenerateGitHashTask : DefaultTask() {
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val headFile: RegularFileProperty
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val headsDir: DirectoryProperty
+    @get:Input
+    abstract val revision: Property<String>
 
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
 
     @TaskAction
     fun generate() {
-        val head = headFile.get().asFile
-
-        val hash = try {
-            if (head.exists()) {
-                // Read the commit hash from .git/HEAD
-                val headContent = head.readText().trim()
-                if (headContent.startsWith("ref:")) {
-                    val refPath = headContent.substring(5) // e.g., refs/heads/main
-                    val commitFile = File(head.parentFile, refPath)
-                    if (commitFile.exists()) commitFile.readText().trim() else ""
-                } else headContent // If it's a detached HEAD (commit hash directly)
-            } else "" // If .git/HEAD doesn't exist
-        } catch (_: Throwable) {
-            "" // Just set to an empty string if any exception occurs
-        }.take(7) // Get the short commit hash
-
-        val outFile = outputDir.file("git-hash.txt").get().asFile
-        outFile.parentFile.mkdirs()
-        outFile.writeText(hash)
+        val output = outputDir.file("git-hash.txt").get().asFile
+        output.parentFile.mkdirs()
+        output.writeText(revision.get().take(7))
     }
 }
 
+val hasGitCheckout = rootProject.file(".git").exists()
+val sourceRevision = if (hasGitCheckout) {
+    providers.exec {
+        workingDir(rootDir)
+        commandLine("git", "rev-parse", "--short=7", "HEAD")
+    }.standardOutput.asText.map { it.trim() }
+} else {
+    providers.environmentVariable("ROKSTRN_SOURCE_REVISION").orElse("")
+}
+
 val generateGitHash = tasks.register<GenerateGitHashTask>("generateGitHash") {
-    val gitDir = layout.projectDirectory.dir("../.git")
-
-    headFile.set(gitDir.file("HEAD"))
-    headsDir.set(gitDir.dir("refs/heads"))
-
+    revision.set(sourceRevision)
     outputDir.set(layout.buildDirectory.dir("generated/git"))
 }
+
+val sourceEpoch = providers.environmentVariable("SOURCE_DATE_EPOCH").orElse(
+    if (hasGitCheckout) providers.exec {
+        workingDir(rootDir)
+        commandLine("git", "show", "-s", "--format=%ct", "HEAD")
+    }.standardOutput.asText.map { it.trim() } else providers.provider { "0" }
+).get().toLong()
 
 android {
     @Suppress("UnstableApiUsage")
@@ -85,17 +110,12 @@ android {
     }
 
     signingConfigs {
-        // We just use SIGNING_KEY_ALIAS here since it won't change
-        // so won't kill the configuration cache.
-        if (System.getenv("SIGNING_KEY_ALIAS") != null) {
-            create("prerelease") {
-                val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-                val prereleaseStoreFile: File? = File(tmpFilePath).listFiles()?.first()
-
-                storeFile = prereleaseStoreFile?.let { file(it) }
-                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+        if (releaseKey != null) {
+            create("rokstrnRelease") {
+                storeFile = releaseKey
+                storePassword = signingPassword
+                keyAlias = signingAlias
+                keyPassword = signingKeyPassword
             }
         }
     }
@@ -103,32 +123,18 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.lagradost.cloudstream3"
+        applicationId = "com.rokstrn.app"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
-        versionName = libs.versions.versionName.get()
+        versionCode = 4090101
+        versionName = forkVersion
 
         manifestPlaceholders["target_sdk_version"] = libs.versions.targetSdk.get()
 
-        // Reads local.properties
-        val localProperties = gradleLocalProperties(rootDir, project.providers)
-
-        buildConfigField(
-            "long",
-            "BUILD_DATE",
-            "${System.currentTimeMillis()}"
-        )
-        buildConfigField(
-            "String",
-            "SIMKL_CLIENT_ID",
-            "\"" + (System.getenv("SIMKL_CLIENT_ID") ?: localProperties["simkl.id"]) + "\""
-        )
-        buildConfigField(
-            "String",
-            "SIMKL_CLIENT_SECRET",
-            "\"" + (System.getenv("SIMKL_CLIENT_SECRET") ?: localProperties["simkl.secret"]) + "\""
-        )
+        buildConfigField("String", "ROKSTRN_REPOSITORY", "\"$forkRepository\"")
+        buildConfigField("String", "ROKSTRN_COMMUNITY_URL", "\"$communityUrl\"")
+        buildConfigField("boolean", "ROKSTRN_UPDATES_ENABLED", updatesEnabled.toString())
+        buildConfigField("long", "BUILD_DATE", "${sourceEpoch * 1000}L")
         buildConfigField(
             "String",
             "MAL_KEY",
@@ -145,6 +151,7 @@ android {
     buildTypes {
         release {
             isDebuggable = false
+            if (hasReleaseSigning) signingConfig = signingConfigs.getByName("rokstrnRelease")
             isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(
@@ -155,6 +162,7 @@ android {
         debug {
             isDebuggable = true
             applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -170,12 +178,7 @@ android {
         create("prerelease") {
             dimension = "state"
             applicationIdSuffix = ".prerelease"
-            if (signingConfigs.names.contains("prerelease")) {
-                signingConfig = signingConfigs.getByName("prerelease")
-            } else {
-                logger.warn("No prerelease signing config!")
-            }
-            versionNameSuffix = "-PRE"
+            versionNameSuffix = "-preview"
             versionCode = (System.currentTimeMillis() / 60000).toInt()
         }
     }
@@ -211,6 +214,7 @@ android {
         }
     }
 
+    // Keep the generated resource and extension-facing JVM namespace.
     namespace = "com.lagradost.cloudstream3"
 }
 

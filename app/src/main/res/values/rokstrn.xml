@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rokstrn_about">About Rokstrn</string>
+    <string name="rokstrn_attribution">Rokstrn is a modified fork of CloudStream, licensed under GPL-3.0.</string>
+    <string name="rokstrn_source">Rokstrn source code</string>
+    <string name="rokstrn_source_unconfigured">The corresponding source is supplied with this build.</string>
+    <string name="rokstrn_upstream_source">CloudStream upstream source</string>
+    <string name="rokstrn_upstream_url" translatable="false">https://github.com/recloudstream/cloudstream</string>
+    <string name="rokstrn_open_source_licenses">Open source licenses</string>
+    <string name="rokstrn_licenses_unavailable">The license text could not be loaded.</string>
+    <string name="rokstrn_releases">Rokstrn releases</string>
+    <string name="rokstrn_documentation">Documentation</string>
+    <string name="rokstrn_support">Report an issue</string>
+    <string name="rokstrn_community">Community</string>
+    <string name="rokstrn_updates_unavailable">In-app updates are unavailable for this build.</string>
+    <string name="rokstrn_service_credentials">Service credentials</string>
+    <string name="rokstrn_credential_tmdb">TMDB read access token</string>
+    <string name="rokstrn_credential_opensubtitles">OpenSubtitles API key</string>
+    <string name="rokstrn_credential_mydramalist">MyDramaList API key</string>
+    <string name="rokstrn_credential_simkl_id">SIMKL client ID</string>
+    <string name="rokstrn_credential_simkl_secret">SIMKL client secret</string>
+    <string name="rokstrn_credential_set">Set on this device</string>
+    <string name="rokstrn_credential_missing">Optional</string>
+    <string name="rokstrn_credential_entry_hint">Save an empty value to remove a credential.</string>
+</resources>

@@ -818,8 +818,7 @@ object VideoDownloadManager {
                     // if nothing at end the server will continue until eof
                     "Range" to "bytes=$startByte-" // ${endByte?.minus(1)?.toString() ?: "" }
                 ),
-                referer = referer,
-                verify = false
+                referer = referer
             )
             val requestStream = request.body.byteStream()
 
@@ -896,7 +895,7 @@ object VideoDownloadManager {
         // we don't want to make a separate connection for every 1kb
         require(chuckSize > 1000)
 
-        val headRequest = app.head(url = url, headers = headers, referer = referer, verify = false)
+        val headRequest = app.head(url = url, headers = headers, referer = referer)
         var contentLength = headRequest.size
         if (contentLength != null && contentLength <= 0) contentLength = null
 
@@ -923,8 +922,7 @@ object VideoDownloadManager {
                             } ?: 1023L
                         }"
                     ),
-                    referer = referer,
-                    verify = false
+                    referer = referer
                 )
                 // if head request did not work then we can just look for the size here too
                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range

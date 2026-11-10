@@ -83,6 +83,7 @@ class CloudStreamApp : Application(), SingletonImageLoader.Factory {
             Thread.setDefaultUncaughtExceptionHandler(it)
         }
 
+        RokstrnCredentials.configureMetadata()
         AppDebug.isDebug = BuildConfig.DEBUG
     }
 

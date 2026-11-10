@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.USER_AGENT
+import com.lagradost.cloudstream3.UnsafeSSL
+import com.lagradost.cloudstream3.app
+import com.lagradost.cloudstream3.insecureApp
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.nicehttp.Requests
-import com.lagradost.nicehttp.ignoreAllSSLErrors
 import okhttp3.Cache
 import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
@@ -20,19 +22,22 @@ fun Requests.initClient(context: Context) {
     this.baseClient = buildDefaultClient(context)
 }
 
-/** Only use ignoreSSL if you know what you are doing*/
-fun Requests.initClient(context: Context, ignoreSSL: Boolean = false) {
-    this.baseClient = buildDefaultClient(context, ignoreSSL)
+// Preserve the previous extension-visible signatures with normal TLS verification.
+@Suppress("UNUSED_PARAMETER")
+fun Requests.initClient(context: Context, ignoreSSL: Boolean = false) = initClient(context)
+
+@Suppress("UNUSED_PARAMETER")
+fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClient =
+    buildDefaultClient(context)
+
+@OptIn(UnsafeSSL::class)
+internal fun configureAppClients(context: Context) {
+    val client = buildDefaultClient(context)
+    app.baseClient = client
+    insecureApp.baseClient = client
 }
 
-
-// Backwards compatible constructor, mark as deprecated later
 fun buildDefaultClient(context: Context): OkHttpClient {
-    return buildDefaultClient(context, false)
-}
-
-/** Only use ignoreSSL if you know what you are doing*/
-fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClient {
     safe { Security.insertProviderAt(Conscrypt.newProvider(), 1) }
     
     val settingsManager = PreferenceManager.getDefaultSharedPreferences(context)
@@ -40,11 +45,6 @@ fun buildDefaultClient(context: Context, ignoreSSL: Boolean = false): OkHttpClie
     val baseClient = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
-        .apply {
-            if (ignoreSSL) {
-                ignoreAllSSLErrors()
-            }
-        }
         .cache(
             // Note that you need to add a ResponseInterceptor to make this 100% active.
             // The server response dictates if and when stuff should be cached.

@@ -23,6 +23,7 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.removePluginMapping
 import com.lagradost.cloudstream3.AllLanguagesName
 import com.lagradost.cloudstream3.AutoDownloadMode
+import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.setKey
@@ -183,10 +184,10 @@ object PluginManager {
         return getKey<Array<PluginData>>(PLUGINS_KEY_LOCAL) ?: emptyArray()
     }
 
-    private val CLOUD_STREAM_FOLDER =
-        Environment.getExternalStorageDirectory().absolutePath + "/Cloudstream3/"
+    private val localExtensionFolder =
+        Environment.getExternalStorageDirectory().resolve(BuildConfig.APPLICATION_ID)
 
-    private val LOCAL_PLUGINS_PATH = CLOUD_STREAM_FOLDER + "plugins"
+    private val LOCAL_PLUGINS_PATH = localExtensionFolder.resolve("plugins").path
 
     var currentlyLoading: String? = null
 
@@ -578,7 +579,7 @@ object PluginManager {
      **/
     fun checkSafeModeFile(): Boolean {
         return safe {
-            val folder = File(CLOUD_STREAM_FOLDER)
+            val folder = localExtensionFolder
             if (!folder.exists()) return@safe false
             val files = folder.listFiles { _, name ->
                 name.equals("safe", ignoreCase = true)

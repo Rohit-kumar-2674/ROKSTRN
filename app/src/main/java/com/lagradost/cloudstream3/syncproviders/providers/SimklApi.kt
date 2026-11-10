@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.APIHolder
-import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.RokstrnCredentials
+import com.lagradost.cloudstream3.ServiceCredential
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKey
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.getKeys
 import com.lagradost.cloudstream3.CloudStreamApp.Companion.removeKey
@@ -174,8 +175,8 @@ class SimklApi : SyncAPI() {
     }
 
     companion object {
-        private const val CLIENT_ID: String = BuildConfig.SIMKL_CLIENT_ID
-        private const val CLIENT_SECRET: String = BuildConfig.SIMKL_CLIENT_SECRET
+        private val CLIENT_ID: String get() = RokstrnCredentials.get(ServiceCredential.SimklClientId).orEmpty()
+        private val CLIENT_SECRET: String get() = RokstrnCredentials.get(ServiceCredential.SimklClientSecret).orEmpty()
         const val SIMKL_CACHED_LIST: String = "simkl_cached_list"
         const val SIMKL_CACHED_LIST_TIME: String = "simkl_cached_time"
 

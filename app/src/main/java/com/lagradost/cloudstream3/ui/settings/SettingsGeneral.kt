@@ -27,7 +27,7 @@ import com.lagradost.cloudstream3.databinding.AddRemoveSitesBinding
 import com.lagradost.cloudstream3.databinding.AddSiteInputBinding
 import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.mvvm.safe
-import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.network.configureAppClients
 import com.lagradost.cloudstream3.ui.BasePreferenceFragmentCompat
 import com.lagradost.cloudstream3.ui.settings.Globals.EMULATOR
 import com.lagradost.cloudstream3.ui.settings.Globals.TV
@@ -351,7 +351,7 @@ class SettingsGeneral : BasePreferenceFragmentCompat() {
                 true,
                 {}) {
                 settingsManager.edit { putInt(getString(R.string.dns_key), prefValues[it]) }
-                (context ?: CloudStreamApp.context)?.let { ctx -> app.initClient(ctx) }
+                (context ?: CloudStreamApp.context)?.let { ctx -> configureAppClients(ctx) }
             }
             return@setOnPreferenceClickListener true
         }

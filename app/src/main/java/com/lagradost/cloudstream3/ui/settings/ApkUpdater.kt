@@ -12,6 +12,7 @@ import com.lagradost.cloudstream3.BuildConfig
 import com.lagradost.cloudstream3.CommonActivity
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.MainActivity.Companion.deleteFileOnExit
+import com.lagradost.cloudstream3.RokstrnConfig
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.mvvm.safe
 import com.lagradost.cloudstream3.receivers.PackageInstallerStatusReceiver
@@ -29,7 +30,7 @@ import java.security.DigestException
 import java.security.MessageDigest
 
 object ApkUpdater : AppUpdater {
-    private const val APP_UPDATE_NAME = "CloudStream"
+    private const val APP_UPDATE_NAME = RokstrnConfig.RELEASE_ASSET_PREFIX
     private const val APP_UPDATE_SUFFIX = "apk"
 
     @Throws
@@ -39,6 +40,7 @@ object ApkUpdater : AppUpdater {
         digest: DigestPair?,
         downloadProgress: (Long, Long?) -> Unit
     ) {
+        check(RokstrnConfig.updateFeedUrl != null)
         val activity = CommonActivity.activity ?: throw ErrorLoadingException("No activity found")
         clearOldFiles(activity)
 
@@ -91,6 +93,7 @@ object ApkUpdater : AppUpdater {
         try {
             val installParams =
                 PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
+            installParams.setAppPackageName(activity.packageName)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 installParams.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
@@ -249,14 +252,19 @@ object ApkUpdater : AppUpdater {
         digest: DigestPair?,
         downloadProgress: (Long, Long?) -> Unit
     ) = withContext(Dispatchers.IO) {
-        val downloadedFile = File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX")
-
-        // We do not need to buffer this because transfer has large writes
-        downloadedFile.outputStream().use { writeStream ->
-            transfer(writeStream, readStream, length, downloadProgress, digest)
+        val downloadedFile = File.createTempFile(APP_UPDATE_NAME, ".$APP_UPDATE_SUFFIX", activity.cacheDir)
+        try {
+            downloadedFile.outputStream().use { writeStream ->
+                transfer(writeStream, readStream, length, downloadProgress, digest)
+            }
+            check(activity.packageManager.getPackageArchiveInfo(downloadedFile.path, 0)?.packageName == activity.packageName) {
+                "The update APK belongs to a different Android package."
+            }
+            openApk(activity, downloadedFile)
+        } catch (error: Throwable) {
+            downloadedFile.delete()
+            throw error
         }
-
-        openApk(activity, downloadedFile)
     }
 
     fun openApk(context: Context, file: File) {

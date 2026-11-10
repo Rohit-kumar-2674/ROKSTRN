@@ -22,7 +22,6 @@ import com.lagradost.cloudstream3.mvvm.logError
 import com.lagradost.cloudstream3.services.BackupWorkManager
 import com.lagradost.cloudstream3.utils.BackupUtils
 import com.lagradost.cloudstream3.utils.BackupUtils.restorePrompt
-import com.lagradost.cloudstream3.utils.InAppUpdater.installPreReleaseIfNeeded
 import com.lagradost.cloudstream3.utils.UIHelper.navigate
 import com.lagradost.cloudstream4.AppSettings
 import com.lagradost.cloudstream4.rememberAppSettings
@@ -83,51 +82,35 @@ object SettingsUpdatesScreen : SearchableSettings {
         return persistentListOf(
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_app_updates),
-                preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.check_for_update),
-                        subtitle = BuildConfig.VERSION_NAME,
-                        icon = painterResource(R.drawable.mobile_arrow_down_24px),
-                        onClick = {
-                            githubViewModel?.onAction(GithubAction.SearchForUpdate)
-                            /*ioSafe {
-                                if (activity?.runAutoUpdate(false) == false) {
-                                    activity?.runOnUiThread {
-                                        showToast(
-                                            R.string.no_update_found,
-                                            Toast.LENGTH_SHORT
-                                        )
-                                    }
-                                }
-                            }*/
-                        }
-                    ),
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.install_prerelease),
-                        icon = painterResource(R.drawable.mobile_code_24px),
-                        enabled = BuildConfig.FLAVOR == "stable",
-                        onClick = {
-                            activity?.installPreReleaseIfNeeded()
-                        }
-                    ),
-
-                    Preference.PreferenceItem.ListPreference(
-                        title = stringResource(R.string.apk_installer_settings),
-                        subtitle = stringResource(R.string.apk_installer_settings_des),
-                        icon = painterResource(R.drawable.mobile_wrench_24px),
-                        entries = integerArrayResource(R.array.apk_installer_values).zip(
-                            stringArrayResource(R.array.apk_installer_pref)
-                        ).toMap(),
-                        preference = settings.updates.apkInstaller
-                    ),
-
-                    Preference.PreferenceItem.SwitchPreference(
-                        title = stringResource(R.string.updates_settings),
-                        subtitle = stringResource(R.string.updates_settings_des),
-                        icon = painterResource(R.drawable.notifications_active_24px),
-                        preference = settings.updates.showAppUpdates
+                preferenceItems = if (githubViewModel == null) {
+                    persistentListOf(Preference.PreferenceItem.InfoPreference(
+                        title = stringResource(R.string.rokstrn_updates_unavailable),
+                    ))
+                } else {
+                    persistentListOf(
+                        Preference.PreferenceItem.TextPreference(
+                            title = stringResource(R.string.check_for_update),
+                            subtitle = BuildConfig.VERSION_NAME,
+                            icon = painterResource(R.drawable.mobile_arrow_down_24px),
+                            onClick = { githubViewModel.onAction(GithubAction.SearchForUpdate) },
+                        ),
+                        Preference.PreferenceItem.ListPreference(
+                            title = stringResource(R.string.apk_installer_settings),
+                            subtitle = stringResource(R.string.apk_installer_settings_des),
+                            icon = painterResource(R.drawable.mobile_wrench_24px),
+                            entries = integerArrayResource(R.array.apk_installer_values).zip(
+                                stringArrayResource(R.array.apk_installer_pref)
+                            ).toMap(),
+                            preference = settings.updates.apkInstaller,
+                        ),
+                        Preference.PreferenceItem.SwitchPreference(
+                            title = stringResource(R.string.updates_settings),
+                            subtitle = stringResource(R.string.updates_settings_des),
+                            icon = painterResource(R.drawable.notifications_active_24px),
+                            preference = settings.updates.showAppUpdates,
+                        ),
                     )
-                )
+                },
             ),
             Preference.PreferenceGroup(
                 title = stringResource(R.string.pref_category_backup),

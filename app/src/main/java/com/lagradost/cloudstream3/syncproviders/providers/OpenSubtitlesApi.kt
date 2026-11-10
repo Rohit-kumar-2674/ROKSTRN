@@ -6,6 +6,8 @@ import com.lagradost.cloudstream3.APIHolder
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.ErrorLoadingException
 import com.lagradost.cloudstream3.R
+import com.lagradost.cloudstream3.RokstrnCredentials
+import com.lagradost.cloudstream3.ServiceCredential
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.subtitles.AbstractSubtitleEntities
 import com.lagradost.cloudstream3.syncproviders.AuthData
@@ -37,13 +39,17 @@ class OpenSubtitlesApi : SubtitleAPI() {
     override val createAccountUrl = "https://www.opensubtitles.com/en/users/sign_up"
 
     companion object {
-        const val API_KEY = "uyBLgFD17MgrYmA0gSXoKllMJBelOYj2"
         const val HOST = "https://api.opensubtitles.com/api/v1"
         const val TAG = "OPENSUBS"
         const val COOLDOWN_DURATION: Long = 1000L * 30L // CoolDown if 429 error code in ms
         var currentCoolDown: Long = 0L
-        const val userAgent = "Cloudstream3 v0.2"
-        val headers = mapOf("user-agent" to userAgent, "Api-Key" to API_KEY)
+        const val userAgent = "Rokstrn v4.9.1"
+        private val headers: Map<String, String>
+            get() {
+                val key = RokstrnCredentials.get(ServiceCredential.OpenSubtitlesKey)
+                    ?: throw ErrorLoadingException("Set an OpenSubtitles API key in Settings > General.")
+                return mapOf("user-agent" to userAgent, "Api-Key" to key)
+            }
     }
 
     private fun canDoRequest(): Boolean {
@@ -130,8 +136,6 @@ class OpenSubtitlesApi : SubtitleAPI() {
                 Pair("Content-Type", "application/json")
             ) + headers,
         )
-        Log.i(TAG, "searchQueryUrl => ${searchQueryUrl}")
-        Log.i(TAG, "Search Req => ${req.text}")
         if (!req.isSuccessful) {
             if (req.code == 429)
                 throwGotTooManyRequests()

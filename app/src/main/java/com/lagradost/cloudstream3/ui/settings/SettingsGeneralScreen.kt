@@ -26,7 +26,7 @@ import com.lagradost.cloudstream3.UnsafeSSL
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream3.insecureApp
 import com.lagradost.cloudstream3.mvvm.logError
-import com.lagradost.cloudstream3.network.initClient
+import com.lagradost.cloudstream3.network.configureAppClients
 import com.lagradost.cloudstream3.ui.settings.SettingsProvidersScreen.toStringRes
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.isAppRestricted
 import com.lagradost.cloudstream3.utils.BatteryOptimizationChecker.showRequestIgnoreBatteryOptDialog
@@ -114,6 +114,7 @@ object SettingsGeneralScreen : SearchableSettings {
         }.sortedBy { fromTagToLanguageName(it) ?: it }
 
         return persistentListOf(
+            rokstrnAbout(),
             Preference.PreferenceGroup(title = stringResource(R.string.extension_language), preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     preference = settings.general.locale,
@@ -225,9 +226,7 @@ object SettingsGeneralScreen : SearchableSettings {
                         onValueChanged = { newValue ->
                             settings.general.dns.set(newValue) // Must set the value before initClient is called
                             (CloudStreamApp.context)?.let { ctx ->
-                                app.initClient(ctx, ignoreSSL = false)
-                                @OptIn(UnsafeSSL::class)
-                                insecureApp.initClient(ctx, ignoreSSL = true)
+                                configureAppClients(ctx)
                             }
                             return@ListPreference true
                         },
@@ -241,43 +240,6 @@ object SettingsGeneralScreen : SearchableSettings {
                 )
             ),
 
-            Preference.PreferenceGroup(
-                title = stringResource(R.string.pref_category_links),
-                preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.github),
-                        subtitle = "https://github.com/recloudstream/cloudstream",
-                        icon = painterResource(R.drawable.ic_github_logo),
-                        onClick = {
-                            CloudStreamApp.openBrowser("https://github.com/recloudstream/cloudstream")
-                        }
-                    ),
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.lightnovel),
-                        subtitle = "https://github.com/LagradOst/QuickNovel",
-                        icon = painterResource(R.drawable.quick_novel_icon),
-                        onClick = {
-                            CloudStreamApp.openBrowser("https://github.com/LagradOst/QuickNovel")
-                        }
-                    ),
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.discord),
-                        subtitle = "https://discord.gg/5Hus6fM",
-                        icon = painterResource(R.drawable.ic_baseline_discord_24),
-                        onClick = {
-                            CloudStreamApp.openBrowser("https://discord.gg/5Hus6fM")
-                        }
-                    ),
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(R.string.cs3wiki),
-                        subtitle = "https://cloudstream.miraheze.org/",
-                        icon = painterResource(R.drawable.description_24px),
-                        onClick = {
-                            CloudStreamApp.openBrowser("https://cloudstream.miraheze.org/")
-                        }
-                    ),
-                )
-            ),
             Preference.PreferenceItem.TextPreference(
                 title = stringResource(R.string.benene),
                 subtitle = if (bananas == 0) {
@@ -290,6 +252,7 @@ object SettingsGeneralScreen : SearchableSettings {
                 },
                 icon = painterResource(R.drawable.benene),
             ),
+            serviceCredentialsPreferences(),
             Preference.PreferenceItem.InfoPreference(title = stringResource(R.string.legal_notice_text)),
         )
     }

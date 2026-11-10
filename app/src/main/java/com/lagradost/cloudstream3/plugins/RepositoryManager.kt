@@ -97,9 +97,7 @@ data class PluginWrapper(
 
 object RepositoryManager {
     const val ONLINE_PLUGINS_FOLDER = "Extensions"
-    val PREBUILT_REPOSITORIES: Array<RepositoryData> by lazy {
-        getKey<Array<RepositoryData>>("PREBUILT_REPOSITORIES") ?: emptyArray()
-    }
+    val PREBUILT_REPOSITORIES: Array<RepositoryData> = emptyArray()
     private val GH_REGEX =
         Regex("^https://raw.githubusercontent.com/([A-Za-z0-9-]+)/([A-Za-z0-9_.-]+)/(.*)$")
 

@@ -29,8 +29,6 @@ import com.lagradost.cloudstream3.ui.settings.ApkUpdater
 import com.lagradost.cloudstream3.ui.settings.GithubReleases
 import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_CONTENT_TYPE
 import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_PRERELEASE
-import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_REPOSITORY
-import com.lagradost.cloudstream3.ui.settings.GithubReleases.APK_USERNAME
 import com.lagradost.cloudstream3.utils.GitInfo.currentCommitHash
 import com.lagradost.cloudstream3.utils.parseMarkdown
 import com.lagradost.cloudstream4.compose.BlackButton
@@ -53,13 +51,15 @@ object MainActivityScreen : Screen {
 
     @Composable
     fun githubViewModel(): GithubViewModel? {
+        if (RokstrnConfig.updateFeedUrl == null) return null
+        val repository = RokstrnConfig.repository ?: return null
         // By having the ComponentActivity as the owner we can have a singleton viewmodel
         val activity = LocalActivity.current as? ComponentActivity ?: return null
         val settings = rememberAppSettings()
         return viewModel(viewModelStoreOwner = activity) {
             GithubViewModel(
-                remoteUserName = APK_USERNAME,
-                remoteRepository = APK_REPOSITORY,
+                remoteUserName = repository.substringBefore('/'),
+                remoteRepository = repository.substringAfter('/'),
                 remotePrereleaseTag = APK_PRERELEASE,
                 remoteContentType = APK_CONTENT_TYPE,
                 versionName = BuildConfig.VERSION_NAME,

@@ -1,6 +1,7 @@
 package com.lagradost.cloudstream3.ui.settings
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.lagradost.cloudstream3.RokstrnConfig
 import com.lagradost.cloudstream3.app
 import com.lagradost.cloudstream4.viewmodels.GithubFile
 import com.lagradost.cloudstream4.viewmodels.GithubRepository
@@ -42,12 +43,13 @@ object GithubReleases : GithubRepository {
         @JsonProperty("object") @SerialName("object") val githubObject: GithubObject,
     )
 
-    const val APK_USERNAME = "recloudstream"
-    const val APK_REPOSITORY = "cloudstream"
     const val APK_PRERELEASE = "pre-release"
     const val APK_CONTENT_TYPE = "application/vnd.android.package-archive"
 
     private val defaultHeaders = mapOf("Accept" to "application/vnd.github.v3+json")
+
+    private val releaseTagPattern = Regex("""v\d+\.\d+\.\d+-rokstrn\.\d+""")
+    private val sha256Pattern = Regex("sha256:[0-9a-fA-F]{64}")
 
     @Throws
     override suspend fun getSha(
@@ -55,6 +57,7 @@ object GithubReleases : GithubRepository {
         repository: String,
         tag: String,
     ): String {
+        check(RokstrnConfig.updateFeedUrl != null && "$userName/$repository" == RokstrnConfig.repository)
         return app.get(
             url = "https://api.github.com/repos/$userName/$repository/git/ref/tags/$tag",
             headers = defaultHeaders
@@ -69,25 +72,23 @@ object GithubReleases : GithubRepository {
         prereleaseTag: String,
         contentType: String,
     ): GithubFile {
-        val latestReleaseUrl = if (prerelease) {
-            // Find the release object
-            // https://docs.github.com/en/rest/releases/releases?apiVersion=2026-03-10#get-a-release-by-tag-name
-            "https://api.github.com/repos/$userName/$repository/releases/tags/$prereleaseTag"
-        } else {
-            // Just get the latest release
-            // https://docs.github.com/en/rest/releases/releases?apiVersion=2026-03-10#get-the-latest-release
-            // The latest release is the most recent non-prerelease, non-draft release, sorted by the created_at attribute
-            "https://api.github.com/repos/$userName/$repository/releases/latest"
-        }
+        check(!prerelease && "$userName/$repository" == RokstrnConfig.repository)
+        val latestReleaseUrl = checkNotNull(RokstrnConfig.updateFeedUrl)
 
         val latestRelease = app.get(
             url = latestReleaseUrl,
             headers = defaultHeaders
         ).parsed<GithubRelease>()
 
-        // Find the first correct asset, given that we might have other binaries we release in the same version
+        val tag = latestRelease.tagName
+        check(releaseTagPattern.matches(tag) && !latestRelease.prerelease)
+        val assetName = "${RokstrnConfig.RELEASE_ASSET_PREFIX}$tag-release.apk"
+        val downloadUrl = "${RokstrnConfig.releasesUrl}/download/$tag/$assetName"
         val foundAsset = latestRelease.assets.firstOrNull { asset ->
-            asset.contentType == contentType
+            asset.contentType == contentType &&
+                asset.name == assetName &&
+                asset.browserDownloadUrl == downloadUrl &&
+                asset.digest?.matches(sha256Pattern) == true
         }
 
         if (foundAsset == null) {
@@ -97,7 +98,7 @@ object GithubReleases : GithubRepository {
         return GithubFile(
             digest = foundAsset.digest,
             downloadUrl = foundAsset.browserDownloadUrl,
-            displayName = foundAsset.name.substringBeforeLast("."),
+            displayName = tag.removePrefix("v"),
             changeLog = latestRelease.body,
             tagName = latestRelease.tagName,
             nodeId = latestRelease.nodeId

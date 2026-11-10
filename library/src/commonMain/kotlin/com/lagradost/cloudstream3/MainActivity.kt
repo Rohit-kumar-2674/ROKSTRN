@@ -25,14 +25,12 @@ private val jsonResponseParser = object : ResponseParser {
     }
 }
 
-/** The default networking helper. This helper performs SSL checks.
- * If you need to make requests to websites with invalid SSL certificates use insecureApp instead. */
+/** The default networking helper with standard TLS verification. */
 var app = Requests(responseParser = jsonResponseParser).apply {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
 }
 
-/** Same as the default app networking helper, but this instance ignores SSL certificates.
- * This should NEVER be used for sensitive networking operations such as logins. Only use this when required. */
+/** Legacy extension API. Rokstrn uses verified TLS for this client. */
 @UnsafeSSL
 var insecureApp = Requests(responseParser = jsonResponseParser).apply {
     defaultHeaders = mapOf("user-agent" to USER_AGENT)
