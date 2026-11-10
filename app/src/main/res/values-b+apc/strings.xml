@@ -139,7 +139,6 @@
     <string name="category_updates">التجديدات وال نسخات الاحتياطية</string>
     <string name="pref_filter_search_quality">خبي هيدي الجودات من نتايج التنبيش</string>
     <string name="type_on_hold">موقف موقتًا</string>
-    <string name="app_name">كلود ستريم</string>
     <string name="player_size_settings_des">شيل الأسود من الأطراف</string>
     <string name="season_short">ج</string>
     <string name="apk_installer_settings">طريقة تجديد الآپ</string>
@@ -149,7 +148,7 @@
     <string name="app_language">لغة الآپ</string>
     <string name="show_trailers_settings">فرجي المقاطع الدعائية</string>
     <string name="test_passed">نجح</string>
-    <string name="play_with_app_name">مَشّي بـ\"كلود ستريم\"</string>
+    <string name="play_with_app_name">مَشّي بـ\"Rokstrn\"</string>
     <string name="subs_subtitle_elevation">إرتفاع الترجمة</string>
     <string name="search_provider_text_types">عوزو الأنواع ل تنبّشو</string>
     <string name="episodes">حلقات</string>
@@ -366,7 +365,7 @@
     <string name="enter_pin_with_name" formatted="true">حطو الأرقام السرية لـ\"%s\"</string>
     <string name="apk_installer_legacy">الطريقة القديمة</string>
     <string name="subtitles_raised">معلى</string>
-    <string name="blank_repo_message">\"كلود ستريم\" م بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپويات. \n \nفيه معلومات على الـ\"ديسكورد\" تبعنا، أو فيكن تنبشو ع معلومات على الإنترنت.</string>
+    <string name="blank_repo_message">\"Rokstrn\" م بتجي مع مصادر ڤيديوات. لازم تنزلو المصادر من ريپويات. \n \nفيه معلومات على الـ\"ديسكورد\" تبعنا، أو فيكن تنبشو ع معلومات على الإنترنت.</string>
     <string name="add_sync">زبد تتبع</string>
     <string name="mobile_data">3G/4G…</string>
     <string name="player_loaded_subtitles" formatted="true">نفَتح %s</string>
@@ -517,7 +516,7 @@
     <string name="plugin">إضافات</string>
     <string name="plugin_load_fail" formatted="true">م قدرنا نفتح %s</string>
     <string name="extension_rating" formatted="true">رايتينگ: %s</string>
-    <string name="download_all_plugins_from_repo">تحزير: \"كلاود ستريم\" مش مسؤولة عن الإضافات المش رسمية، و م بتدعمن أبدًا!</string>
+    <string name="download_all_plugins_from_repo">تحزير: \"Rokstrn\" مش مسؤولة عن الإضافات المش رسمية، و م بتدعمن أبدًا!</string>
     <string name="extension_status">الحالة</string>
     <string name="delete_repository">محي الريپو</string>
     <string name="category_player">مشغل الڤيديو</string>
@@ -573,21 +572,20 @@
     <string name="toast_copied">نتسخ!</string>
     <string name="clipboard_permission_error">فيه ارور بال وصول ل الكليپ-بورد. پليز جرب مرة أخرى.</string>
     <string name="clipboard_unknown_error">فيه ارور بال نسخ. پليز نسوخ الـLogcat 🐈 وبعته ل المسؤولين عن دعم الآپ.</string>
-    <string name="biometric_warning">هلّق نعمل نسخة احتياطية للداتا تبع \"كلود ستريم\". إذا مابق ينفتح ويمشي الآپ، فيك تعمل كلير للداتا تبعه وترَجع الداتا من النسخة الاحتياطية اللي هلّق عملنالك ياها. \nالاحتمال انو مابق ينفتح الآپ احتمالية زغيرة كتير، بس كل جهاز بيتصرف بشكل مختلف، ونحنا منعتذر إذا سببنا أي إزعاج.</string>
+    <string name="biometric_warning">هلّق نعمل نسخة احتياطية للداتا تبع \"Rokstrn\". إذا مابق ينفتح ويمشي الآپ، فيك تعمل كلير للداتا تبعه وترَجع الداتا من النسخة الاحتياطية اللي هلّق عملنالك ياها. \nالاحتمال انو مابق ينفتح الآپ احتمالية زغيرة كتير، بس كل جهاز بيتصرف بشكل مختلف، ونحنا منعتذر إذا سببنا أي إزعاج.</string>
     <string name="ok">أوكي</string>
     <string name="battery_dialog_title">وقف اپتميزايشن بطارية جهازك</string>
     <string name="app_unrestricted_toast">بطارية الآپ اصلًا محطوطة ع «غير مقيد» \"Unrestricted\"</string>
-    <string name="app_info_intent_error">م قدرنا نفتح معلومات الآپ تبع \"كلود ستريم\".</string>
+    <string name="app_info_intent_error">م قدرنا نفتح معلومات الآپ تبع \"Rokstrn\".</string>
     <string name="music_singular">موسيقى</string>
     <string name="audio_book_singular">أوديو بوك</string>
     <string name="custom_media_singular">الميديا</string>
-    <string name="battery_dialog_message">ت تضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يللي مشتركلها، الآپ \"كلود ستريم\" بده إذن ليمشي ب الباكگراوند. ازا كبست أوكي، رح يفتح شباك إذن زغير، كبوس «سماح».\n\nملاحظة إنو هيدا الإذن ما بيعني إنو \"كلود ستريم 3\" رح تستنزف البطارية. ومش رح يشتغل الآپ بال باكگراوند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي.</string>
+    <string name="battery_dialog_message">ت تضمن عدم انقطاع التنزيلات والنوتيفيكايشنات للبرامج التلفزيونية يللي مشتركلها، الآپ \"Rokstrn\" بده إذن ليمشي ب الباكگراوند. ازا كبست أوكي، رح يفتح شباك إذن زغير، كبوس «سماح».\n\nملاحظة إنو هيدا الإذن ما بيعني إنو \"Rokstrn 3\" رح تستنزف البطارية. ومش رح يشتغل الآپ بال باكگراوند إلّا عند الضرورة، متل لمّا تتلقا نوتيفيكايشن أو تنزل ڤيديو من الريپو الاصلي.</string>
     <string name="reset_btn">ريسات</string>
     <string name="episode_upcoming_format" formatted="true">رح ينزل ب %s</string>
     <string name="next_season_episode_format" formatted="true">الحلقة ال %2$d من الجزء ال%1$d رح تنزل ب</string>
     <string name="episode_action_cast_mirror">كاست مراية</string>
     <string name="player_settings_select_cast_device">نقي جهاز الكاست</string>
-    <string name="cs3wiki">ويكي \"كلود ستريم\"</string>
     <string name="pref_category_accounts">أكونتات</string>
     <string name="pref_category_security">سكوريتي</string>
     <string name="qr_image">صورة الـ\"كيو آر\" كود</string>

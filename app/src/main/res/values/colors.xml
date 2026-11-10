@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3d50fa</color>
+    <color name="rokstrn_splash">#100E17</color>
+    <color name="colorPrimary">#7952D4</color>
     <color name="colorPrimarySecond">@color/colorPrimary</color>
     <color name="colorSearch">#303135</color> <!--#3444D1 @color/itemBackground-->
     <color name="colorOngoing">#F53B66</color> <!--FF8181-->
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#3b65f5</color> <!-- 818fff-->
+    <color name="colorPrimaryDark">#4E2B94</color>
+    <color name="colorAccent">#7952D4</color>
 
-    <color name="primaryGrayBackground">#2B2C30</color> <!--0f0f10 0E0E10 303135 2B2C30-->
-    <color name="primaryBlackBackground">#111111</color> <!--1C1C20 191a1f 19181E 202125 1C1C20-->
-    <color name="iconGrayBackground">#1C1C20</color> <!--141419 202125-->
-    <color name="boxItemBackground">#161616</color> <!-- 17171B 1B1B20-->
+    <color name="primaryGrayBackground">#2D2837</color>
+    <color name="primaryBlackBackground">#121017</color>
+    <color name="iconGrayBackground">#1E1A26</color>
+    <color name="boxItemBackground">#18151E</color>
 
     <color name="textColor">#e9eaee</color> <!--FFF-->
     <color name="grayTextColor">#9ba0a4</color> <!-- 5e5f62-->

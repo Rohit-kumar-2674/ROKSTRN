@@ -9,7 +9,6 @@
     <string name="new_update_format" formatted="true">נמצא עדכון חדש! \n%1$s -&gt; %2$s</string>
     <string name="filler" formatted="true">סינון</string>
     <string name="duration_format" formatted="true">%d דקות</string>
-    <string name="app_name">קלאודסטרים</string>
     <string name="title_home">בית</string>
     <string name="title_search">חיפוש</string>
     <string name="title_downloads">הורדות</string>
@@ -69,7 +68,7 @@
     <string name="sort_clear">נקה</string>
     <string name="sort_save">לשמור</string>
     <string name="app_dub_sub_episode_text_format" formatted="true">%1$s פרק %2$d</string>
-    <string name="play_with_app_name">נגן עם קלאודסטרים</string>
+    <string name="play_with_app_name">נגן עם Rokstrn</string>
     <string name="next_episode">פרק הבא</string>
     <string name="loading">טוען…</string>
     <string name="type_watching">צופה</string>
@@ -427,7 +426,7 @@
     <string name="update_notification_failed">לא ניתן להתקין את הגרסה החדשה של האפליקציה</string>
     <string name="batch_download">הורדת אצווה</string>
     <string name="plugin_singular">תוסף</string>
-    <string name="download_all_plugins_from_repo">אזהרה: קלאודסטרים אינה לוקחת אחריות על השימוש בהרחבות צד שלישי ואינה מספקת להן תמיכה כלשהי!</string>
+    <string name="download_all_plugins_from_repo">אזהרה: Rokstrn אינה לוקחת אחריות על השימוש בהרחבות צד שלישי ואינה מספקת להן תמיכה כלשהי!</string>
     <string name="audio_tracks">רצועות שמע</string>
     <string name="tracks">מסלולים</string>
     <string name="safe_mode_description">כל התוספים נכבו עקב התרסקות כדי לעזור לך למצוא את האחד הגורם לצרות.</string>
@@ -439,7 +438,7 @@
     <string name="plugins_downloaded" formatted="true">הורד: %d</string>
     <string name="plugins_disabled" formatted="true">מוגבל: %d</string>
     <string name="plugins_not_downloaded" formatted="true">לא מורד: %d</string>
-    <string name="blank_repo_message">לקלאודסטרים אין אתרים מותקנים כברירת מחדל. עליך להתקין את האתרים ממאגרים. \n \nהצטרף לדיסקורד שלנו או חפש באינטרנט.</string>
+    <string name="blank_repo_message">לRokstrn אין אתרים מותקנים כברירת מחדל. עליך להתקין את האתרים ממאגרים. \n \nהצטרף לדיסקורד שלנו או חפש באינטרנט.</string>
     <string name="view_public_repositories_button">הצג מאגרים קהילתיים</string>
     <string name="view_public_repositories_button_short">רשימה ציבורית</string>
     <string name="uppercase_all_subtitles">לשים את הכתוביות באותיות רישיות</string>
@@ -576,13 +575,13 @@
     <string name="auto_rotate_video">סיבוב אוטומטי</string>
     <string name="test_extensions">בדוק את כל ההרחבות</string>
     <string name="test_extensions_summary">בדיקה זו מיועדת למפתחים בלבד ואינה מאשרת או שוללת את תקינות פעולתה של הרחבה כלשהי.</string>
-    <string name="biometric_authentication_title">בטל את נעילת קלאודסטרים</string>
+    <string name="biometric_authentication_title">בטל את נעילת Rokstrn</string>
     <string name="biometric_setting">נעילה באמצעות זיהוי ביומטרי</string>
     <string name="password_pin_authentication_title">אימות באמצעות סיסמה/PIN</string>
     <string name="biometric_unsupported">אימות ביומטרי אינו נתמך במכשיר זה</string>
     <string name="biometric_setting_summary">בטל את נעילת האפליקציה באמצעות טביעת אצבע, זיהוי פנים, PIN, תבנית וסיסמה.</string>
     <string name="biometric_prompt_description">לאחר כמה ניסיונות כושלים, החלון ייסגר. פשוט הפעל מחדש את האפליקציה כדי לנסות שוב.</string>
-    <string name="biometric_warning">הנתונים שלך בקלאודסטרים גובו כעת. אף שהסיכוי לכך נמוך מאוד, כל מכשיר עשוי להתנהג אחרת. במקרה הנדיר שבו תינעל מחוץ לאפליקציה, נקה את נתוני האפליקציה לחלוטין ושחזר מגיבוי. אנו מתנצלים מאוד על כל אי נוחות שעלולה להיגרם מכך.</string>
+    <string name="biometric_warning">הנתונים שלך בRokstrn גובו כעת. אף שהסיכוי לכך נמוך מאוד, כל מכשיר עשוי להתנהג אחרת. במקרה הנדיר שבו תינעל מחוץ לאפליקציה, נקה את נתוני האפליקציה לחלוטין ושחזר מגיבוי. אנו מתנצלים מאוד על כל אי נוחות שעלולה להיגרם מכך.</string>
     <string name="resume_remaining" formatted="true">%s\nנותרו</string>
     <string name="favorite">מועדף</string>
     <string name="unfavorite">הסר ממועדפים</string>
@@ -590,15 +589,14 @@
     <string name="clipboard_unknown_error">שגיאה בהעתקה, נא להעתיק את ה־logcat ולפנות לתמיכה של האפליקציה.</string>
     <string name="ok">אישור</string>
     <string name="battery_dialog_title">השבת את מיטוב הסוללה</string>
-    <string name="battery_dialog_message">כדי להבטיח הורדות והתראות רציפות עבור סדרות טלוויזיה שנרשמת אליהן, קלאודסטרים זקוקה להרשאה לפעול ברקע. בלחיצה על אישור תוצג לך בקשת הרשאה. נא ללחוץ על \'אפשר\'.\n\nלתשומת לבך, הרשאה זו אינה אומרת ש־CS3 תרוקן את הסוללה שלך. היא תפעל ברקע רק כשיש בכך צורך, למשל בעת קבלת התראות או הורדת סרטונים מהרחבות רשמיות.</string>
+    <string name="battery_dialog_message">כדי להבטיח הורדות והתראות רציפות עבור סדרות טלוויזיה שנרשמת אליהן, Rokstrn זקוקה להרשאה לפעול ברקע. בלחיצה על אישור תוצג לך בקשת הרשאה. נא ללחוץ על \'אפשר\'.\n\nלתשומת לבך, הרשאה זו אינה אומרת ש־CS3 תרוקן את הסוללה שלך. היא תפעל ברקע רק כשיש בכך צורך, למשל בעת קבלת התראות או הורדת סרטונים מהרחבות רשמיות.</string>
     <string name="app_unrestricted_toast">השימוש בסוללה של האפליקציה כבר מוגדר כבלתי מוגבל</string>
-    <string name="app_info_intent_error">לא ניתן לפתוח את פרטי האפליקציה של קלאודסטרים.</string>
+    <string name="app_info_intent_error">לא ניתן לפתוח את פרטי האפליקציה של Rokstrn.</string>
     <string name="audio_book_singular">ספר שמע</string>
     <string name="reset_btn">איפוס</string>
     <string name="episode_upcoming_format" formatted="true">בקרוב בעוד %s</string>
     <string name="episode_action_cast_mirror">שדר מראה</string>
     <string name="player_settings_select_cast_device">בחר מכשיר שידור</string>
-    <string name="cs3wiki">הוויקי של קלאודסטרים</string>
     <string name="pref_category_security">אבטחה</string>
     <string name="pref_category_accounts">חשבונות</string>
     <string name="auth_locally">אימות מקומי</string>

@@ -1,0 +1,7 @@
+Rokstrn is a modified fork of CloudStream, licensed under GPL-3.0.
+Fork modifications dated 2026-11-10.
+Upstream source: https://github.com/recloudstream/cloudstream/tree/v4.9.1
+Verified upstream revision: c92e0cf02eda0429fbb4b2fcea4b528cb65aa9fb
+Copyright in upstream code remains with the respective authors and contributors.
+ROKSTRN is independently maintained and has original branding.
+See LICENSE, CHANGES.md and THIRD_PARTY_NOTICES.md for terms and provenance.

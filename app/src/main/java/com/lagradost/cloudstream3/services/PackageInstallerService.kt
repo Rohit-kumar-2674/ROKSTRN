@@ -64,7 +64,7 @@ class PackageInstallerService : Service() {
 
             // Delete all old updates
             ioSafe {
-                val appUpdateName = "CloudStream"
+                val appUpdateName = getString(R.string.app_name)
                 val appUpdateSuffix = "apk"
 
                 this@PackageInstallerService.cacheDir.listFiles()?.filter {

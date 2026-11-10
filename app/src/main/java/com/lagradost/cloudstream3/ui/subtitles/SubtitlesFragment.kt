@@ -72,43 +72,43 @@ enum class SubtitleFont(
 ) {
     @JsonProperty("Trebuchet")
     @SerialName("Trebuchet")
-    Trebuchet(R.font.trebuchet_ms, "Trebuchet MS"),
+    Trebuchet(R.font.carlito, "Carlito"),
     @JsonProperty("Netflix")
     @SerialName("Netflix")
-    Netflix(R.font.netflix_sans, "Netflix Sans"),
+    Netflix(R.font.lato, "Lato"),
     @JsonProperty("Google")
     @SerialName("Google")
-    Google(R.font.google_sans, "Google Sans"),
+    Google(R.font.lexend, "Lexend"),
     @JsonProperty("Open")
     @SerialName("Open")
     Open(R.font.open_sans, "Open Sans"),
     @JsonProperty("Futura")
     @SerialName("Futura")
-    Futura(R.font.futura, "Futura"),
+    Futura(R.font.jost, "Jost"),
     @JsonProperty("Consola")
     @SerialName("Consola")
-    Consola(R.font.consola, "Consola"),
+    Consola(R.font.source_code_pro, "Source Code Pro"),
     @JsonProperty("Gotham")
     @SerialName("Gotham")
-    Gotham(R.font.gotham, "Gotham"),
+    Gotham(R.font.montserrat, "Montserrat"),
     @JsonProperty("Lucida")
     @SerialName("Lucida")
-    Lucida(R.font.lucida_grande, "Lucida Grande"),
+    Lucida(R.font.atkinson_hyperlegible, "Atkinson Hyperlegible"),
     @JsonProperty("STIX")
     @SerialName("STIX")
     STIX(R.font.stix_general, "STIX General"),
     @JsonProperty("TimesNewRoman")
     @SerialName("TimesNewRoman")
-    TimesNewRoman(R.font.times_new_roman, "Times New Roman"),
+    TimesNewRoman(R.font.tinos, "Tinos"),
     @JsonProperty("Verdana")
     @SerialName("Verdana")
-    Verdana(R.font.verdana, "Verdana"),
+    Verdana(R.font.ibm_plex_sans, "IBM Plex Sans"),
     @JsonProperty("Ubuntu")
     @SerialName("Ubuntu")
     Ubuntu(R.font.ubuntu_regular, "Ubuntu"),
     @JsonProperty("Comic")
     @SerialName("Comic")
-    Comic(R.font.comic_sans, "Comic Sans"),
+    Comic(R.font.comic_neue, "Comic Neue"),
     @JsonProperty("Poppins")
     @SerialName("Poppins")
     Poppins(R.font.poppins_regular, "Poppins"),
@@ -710,36 +710,21 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
 
             subsFont.setFocusableInTv()
             subsFont.setOnClickListener { textView ->
-                val fontTypes = listOf(
-                    null to textView.context.getString(R.string.normal),
-                    R.font.trebuchet_ms to "Trebuchet MS",
-                    R.font.netflix_sans to "Netflix Sans",
-                    R.font.google_sans to "Google Sans",
-                    R.font.open_sans to "Open Sans",
-                    R.font.futura to "Futura",
-                    R.font.consola to "Consola",
-                    R.font.gotham to "Gotham",
-                    R.font.lucida_grande to "Lucida Grande",
-                    R.font.stix_general to "STIX General",
-                    R.font.times_new_roman to "Times New Roman",
-                    R.font.verdana to "Verdana",
-                    R.font.ubuntu_regular to "Ubuntu",
-                    R.font.comic_sans to "Comic Sans",
-                    R.font.poppins_regular to "Poppins",
-                )
+                val fontTypes = listOf<SubtitleFont?>(null) +
+                    SubtitleFont.entries.filter { it != SubtitleFont.Custom }
                 val savedFontTypes = textView.context.getSavedFonts()
 
                 val currentIndex =
                     savedFontTypes.indexOfFirst { it.absolutePath == state.typefaceFilePath }
                         .let { index ->
                             if (index == -1)
-                                fontTypes.indexOfFirst { it.first == state.font?.resource }
+                                fontTypes.indexOf(state.font)
                             else index + fontTypes.size
                         }
 
                 //showBottomDialog
                 activity?.showDialog(
-                    fontTypes.map { it.second } + savedFontTypes.map { it.name },
+                    fontTypes.map { it?.label ?: textView.context.getString(R.string.normal) } + savedFontTypes.map { it.name },
                     currentIndex,
                     (textView as TextView).text.toString(),
                     false,
@@ -747,7 +732,7 @@ class SubtitlesFragment : BaseDialogFragment<SubtitleSettingsBinding>(
                 ) { index ->
                     state = if (index < fontTypes.size) {
                         state.copy(
-                            font = SubtitleFont.entries.firstOrNull { it.resource == fontTypes[index].first },
+                            font = fontTypes[index],
                             typefaceFilePath = null
                         )
                     } else {

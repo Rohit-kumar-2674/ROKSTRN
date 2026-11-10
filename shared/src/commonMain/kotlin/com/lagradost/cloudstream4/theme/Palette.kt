@@ -3,7 +3,7 @@ package com.lagradost.cloudstream4.theme
 import androidx.compose.ui.graphics.Color
 
 enum class CloudStreamPrimaryColor(val color: Color) {
-    NORMAL(Color(0xFF3D50FA)),
+    NORMAL(Color(0xFF7952D4)),
     BLUE(Color(0xFF5664B7)),
     PURPLE(Color(0xFF6200EA)),
     GREEN(Color(0xFF00BFA5)),
@@ -30,14 +30,14 @@ enum class CloudStreamPrimaryColor(val color: Color) {
 
 internal object CloudStreamPalette {
     // Default dark (AppTheme / Black)
-    val Primary = Color(0xFF3D50FA)
-    val PrimaryDark = Color(0xFF3700B3)
+    val Primary = Color(0xFF7952D4)
+    val PrimaryDark = Color(0xFF4E2B94)
     val Ongoing = Color(0xFFF53B66)
 
-    val DarkPrimaryGrayBg = Color(0xFF2B2C30)
-    val DarkBlackBg = Color(0xFF111111)
-    val DarkIconGrayBg = Color(0xFF1C1C20)
-    val DarkBoxItemBg = Color(0xFF161616)
+    val DarkPrimaryGrayBg = Color(0xFF2D2837)
+    val DarkBlackBg = Color(0xFF121017)
+    val DarkIconGrayBg = Color(0xFF1E1A26)
+    val DarkBoxItemBg = Color(0xFF18151E)
     val DarkText = Color(0xFFE9EAEE)
     val DarkGrayText = Color(0xFF9BA0A4)
     val DarkIcon = Color(0xFF9BA0A6)

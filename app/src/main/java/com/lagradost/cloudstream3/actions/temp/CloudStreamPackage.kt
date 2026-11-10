@@ -7,6 +7,7 @@ import android.net.Uri
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.actions.OpenInAppAction
 import com.lagradost.cloudstream3.BuildConfig
+import com.lagradost.cloudstream3.R
 import com.lagradost.cloudstream3.SkipSerializationTest
 import com.lagradost.cloudstream3.ui.player.ExtractorUri
 import com.lagradost.cloudstream3.ui.player.SubtitleData
@@ -37,7 +38,7 @@ import kotlinx.serialization.Serializable
  */
 @Suppress("Unused")
 class CloudStreamPackage : OpenInAppAction(
-    appName = txt("CloudStream"),
+    appName = txt(R.string.app_name),
     packageName = BuildConfig.APPLICATION_ID, //"com.lagradost.cloudstream3" or "com.lagradost.cloudstream3.prerelease"
     intentClass = "com.lagradost.cloudstream3.ui.player.DownloadedPlayerActivity"
 ) {
