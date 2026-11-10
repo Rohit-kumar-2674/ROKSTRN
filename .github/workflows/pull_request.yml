@@ -1,41 +1,100 @@
-name: Artifact Build
+name: ROKSTRN Android builds
 
-on: [pull_request]
+on:
+  push:
+    branches: [rokstrn-rebrand]
+  pull_request:
+    branches: [rokstrn-rebrand]
+  workflow_dispatch:
+    inputs:
+      sign_release:
+        description: Sign the stable release with configured ROKSTRN secrets
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    if: github.repository != 'recloudstream/cloudstream'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      ROKSTRN_GITHUB_REPOSITORY: ${{ github.repository }}
     steps:
-    - uses: actions/checkout@v6
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v5
-      with:
-        distribution: temurin
-        java-version: 17
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v5
-      with:
-        cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
-        cache-read-only: false
-
-    - name: Ensure binary compatibility
-      # This is to ensure that your code is backwards compatible.
-      # If this fails you need to add a @Prerelease annotation to new code.
-      run: ./gradlew library:checkKotlinAbi
-
-    - name: Run Gradle
-      run: ./gradlew assemblePrereleaseDebug lint check
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v7
-      with:
-        name: pull-request-build
-        path: "app/build/outputs/apk/prerelease/debug/*.apk"
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        with:
+          validate-wrappers: true
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+      - name: Install Android SDK components
+        run: sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
+      - name: Build and validate
+        run: |
+          ./gradlew --max-workers=2 --stacktrace :app:assembleStableDebug :app:assembleStableRelease
+          ./gradlew --max-workers=2 --stacktrace :app:lintStableDebug \
+            :app:testStableDebugUnitTest :library:jvmTest :library:checkKotlinAbi
+          cmp LICENSE app/src/main/assets/legal/GPL-3.0.txt
+      - name: Stage APKs and matching source
+        run: |
+          scripts/package-apks.sh dist
+          git archive --format=zip --prefix=ROKSTRN/ -o dist/ROKSTRN-source.zip HEAD
+          cp RELEASE_NOTES.md dist/
+          (cd dist && sha256sum ROKSTRN-source.zip >> SHA256SUMS.txt)
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ROKSTRN-Android-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+      - name: Upload test and lint reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ROKSTRN-validation-${{ github.sha }}
+          path: |
+            app/build/reports/
+            library/build/reports/
+          if-no-files-found: ignore
+      - name: Sign and verify the stable release
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/rokstrn-rebrand' && inputs.sign_release
+        env:
+          ROKSTRN_KEYSTORE_BASE64: ${{ secrets.ROKSTRN_KEYSTORE_BASE64 }}
+          ROKSTRN_KEYSTORE_PASSWORD: ${{ secrets.ROKSTRN_KEYSTORE_PASSWORD }}
+          ROKSTRN_KEY_ALIAS: ${{ secrets.ROKSTRN_KEY_ALIAS }}
+          ROKSTRN_KEY_PASSWORD: ${{ secrets.ROKSTRN_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$ROKSTRN_KEYSTORE_BASE64" || -z "$ROKSTRN_KEYSTORE_PASSWORD" ||
+                -z "$ROKSTRN_KEY_ALIAS" || -z "$ROKSTRN_KEY_PASSWORD" ]]; then
+            echo "::error::Configure all four ROKSTRN signing secrets before requesting signing."
+            exit 1
+          fi
+          umask 077
+          ROKSTRN_KEYSTORE_FILE=$(mktemp "$RUNNER_TEMP/rokstrn-signing.XXXXXXXX")
+          export ROKSTRN_KEYSTORE_FILE
+          trap 'rm -f -- "$ROKSTRN_KEYSTORE_FILE"' EXIT
+          printf '%s' "$ROKSTRN_KEYSTORE_BASE64" | base64 --decode > "$ROKSTRN_KEYSTORE_FILE"
+          unset ROKSTRN_KEYSTORE_BASE64
+          rm -f -- app/build/outputs/apk/stable/release/app-stable-release-unsigned.apk
+          ./gradlew --max-workers=2 --no-configuration-cache --no-build-cache :app:assembleStableRelease
+          scripts/package-apks.sh dist-signed release
+          if ! compgen -G 'dist-signed/ROKSTRN-*-release.apk' > /dev/null; then
+            echo "::error::No verified signed APK was produced."
+            exit 1
+          fi
+          cp dist/ROKSTRN-source.zip dist/RELEASE_NOTES.md dist-signed/
+          (cd dist-signed && sha256sum ROKSTRN-source.zip >> SHA256SUMS.txt)
+      - name: Upload signed release build
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/rokstrn-rebrand' && inputs.sign_release
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: ROKSTRN-signed-${{ github.sha }}
+          path: dist-signed/
+          if-no-files-found: error

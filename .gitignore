@@ -226,3 +226,9 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/kotlin,java,android,androidstudio,visualstudiocode
+
+# Fork build staging and signing files
+/dist/
+/dist-signed/
+*.p12
+*.pkcs12
