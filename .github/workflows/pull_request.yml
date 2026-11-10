@@ -37,6 +37,8 @@ jobs:
       - name: Install Android SDK components
         run: sdkmanager "platforms;android-37.0" "build-tools;36.0.0" "platform-tools"
       - name: Build and validate
+        env:
+          TZ: UTC
         run: |
           ./gradlew --max-workers=2 --stacktrace :app:assembleStableDebug :app:assembleStableRelease
           ./gradlew --max-workers=2 --stacktrace :app:lintStableDebug \

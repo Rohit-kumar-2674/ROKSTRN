@@ -14,7 +14,7 @@ The build uses JDK 17, Gradle 9.4.1, AGP 9.1.1, Kotlin 2.4.0, Android SDK 37.0 a
 
 ```sh
 ./gradlew :app:assembleStableDebug :app:assembleStableRelease
-./gradlew :app:lintStableDebug :app:testStableDebugUnitTest :library:jvmTest :library:checkKotlinAbi
+TZ=UTC ./gradlew :app:lintStableDebug :app:testStableDebugUnitTest :library:jvmTest :library:checkKotlinAbi
 scripts/package-apks.sh dist
 ```
 

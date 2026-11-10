@@ -41,13 +41,15 @@ git clone --branch rokstrn-rebrand "https://github.com/$owner/ROKSTRN.git" rokst
 cd rokstrn
 ./gradlew :app:tasks --all
 ./gradlew :app:assembleStableDebug :app:assembleStableRelease
-./gradlew :app:lintStableDebug :app:testStableDebugUnitTest :library:jvmTest :library:checkKotlinAbi
+TZ=UTC ./gradlew :app:lintStableDebug :app:testStableDebugUnitTest :library:jvmTest :library:checkKotlinAbi
 scripts/package-apks.sh dist
 (cd dist && sha256sum -c SHA256SUMS.txt)
 adb install -r dist/ROKSTRN-v4.9.1-rokstrn.1-debug.apk
 ```
 
 Raw APKs are in `app/build/outputs/apk/stable/debug/` and `app/build/outputs/apk/stable/release/`. The staging script checks application IDs, labels, alignment and available signatures. The upstream preview flavors are also present. They use separate package suffixes and manual installation. If building from a plain source archive, set `ROKSTRN_SOURCE_REVISION` and `SOURCE_DATE_EPOCH` to the originating Git revision and Unix commit time. A local SDK and ADB workflow needs a supported host or cloud runner.
+
+The validation command uses UTC because two inherited episode-date tests fail when the system time zone has a nonzero UTC offset. The library ABI reference reflects the signatures compiled from the official v4.9.1 tag.
 
 ## Links, optional updates and signing
 

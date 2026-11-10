@@ -9,3 +9,4 @@
 - Replaced bundled fonts with absent or restrictive redistribution terms and retained the serialized subtitle font keys.
 - Restored standard TLS verification for the app, player and downloads. Replaced embedded service credentials with app-private, device-local settings.
 - Added independent signing, APK verification, reproducible revision metadata and phone-usable GitHub Actions.
+- Reconciled the Kotlin ABI snapshot with the signatures compiled from the official tag. The validation workflow uses UTC for the inherited episode-date tests.
