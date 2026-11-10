@@ -10,3 +10,4 @@
 - Restored standard TLS verification for the app, player and downloads. Replaced embedded service credentials with app-private, device-local settings.
 - Added independent signing, APK verification, reproducible revision metadata and phone-usable GitHub Actions.
 - Reconciled the Kotlin ABI snapshot with the signatures compiled from the official tag. The validation workflow uses UTC for the inherited episode-date tests.
+- Replaced the logo on the Android setup screen and the retained shared window icon. Removed obsolete brand artwork and updated the in-app legal notice name.
